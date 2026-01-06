@@ -1,98 +1,140 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
-
-import { HelloWave } from '@/components/hello-wave';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { Link } from 'expo-router';
+import React, { useState } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  FlatList,
+  Alert,
+} from 'react-native';
+import TopBar from '@/components/TopBar';
+import PatientCard from '@/components/PatientCard';
+import BenefitItem from '@/components/BenefitItem';
+import NotificationCard from '@/components/NotificationCard';
+import { AppColors } from '@/constants/theme';
+import { useUser } from '@/context/UserContext';
+import { router } from 'expo-router';
 
 export default function HomeScreen() {
-  return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <Link href="/modal">
-          <Link.Trigger>
-            <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-          </Link.Trigger>
-          <Link.Preview />
-          <Link.Menu>
-            <Link.MenuAction title="Action" icon="cube" onPress={() => alert('Action pressed')} />
-            <Link.MenuAction
-              title="Share"
-              icon="square.and.arrow.up"
-              onPress={() => alert('Share pressed')}
-            />
-            <Link.Menu title="More" icon="ellipsis">
-              <Link.MenuAction
-                title="Delete"
-                icon="trash"
-                destructive
-                onPress={() => alert('Delete pressed')}
-              />
-            </Link.Menu>
-          </Link.Menu>
-        </Link>
+  const { userData } = useUser();
+  const [showNotification, setShowNotification] = useState(false);
 
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+  // 기본값 설정 (로그인하지 않은 경우나 데이터가 없는 경우)
+  const patientInfo = userData.patient ? {
+    name: userData.patient.patientName,
+    relationship: userData.patient.patientRelationship,
+    age: userData.patient.age,
+    diagnosis: userData.patient.diseases,
+    address: userData.patient.patientRegion,
+  } : {
+    name: '환자명',
+    relationship: '관계',
+    age: 0,
+    diagnosis: '진단명 없음',
+    address: '주소 없음',
+  };
+
+  const benefits = [
+    {
+      id: '1',
+      name: '장기요양보험 재가급여',
+      description: '가정에서 요양 서비스를 받을 수 있는 혜택입니다. 방문요양, 방문목욕, 방문간호 등이 포함됩니다.',
+      savings: '월 80만원',
+      category: '요양급여',
+    },
+    {
+      id: '2',
+      name: '중증환자 의료비 지원',
+      description: '뇌혈관질환 등 중증질환자를 위한 의료비 지원 제도입니다. 본인부담금을 크게 줄일 수 있습니다.',
+      savings: '월 120만원',
+      category: '의료비지원',
+    },
+    {
+      id: '3',
+      name: '장애인활동지원서비스',
+      description: '일상생활 지원이 필요한 분을 위한 활동보조 서비스를 제공합니다.',
+      savings: '월 60만원',
+      category: '돌봄서비스',
+    },
+    {
+      id: '4',
+      name: '간병비 지원사업',
+      description: '저소득층 환자의 간병비 부담을 덜어주는 지원사업입니다.',
+      savings: '월 40만원',
+      category: '간병지원',
+    },
+  ];
+
+  const handleBenefitPress = (benefit: any) => {
+    router.push({
+      pathname: '/benefit-detail',
+      params: { id: benefit.id },
+    });
+  };
+
+  const handleShowNotification = () => {
+    setShowNotification(true);
+  };
+
+  return (
+    <View style={styles.container}>
+      <TopBar onNotificationPress={handleShowNotification} />
+      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+        <PatientCard patient={patientInfo} />
+        
+        <NotificationCard 
+          patientName={patientInfo.name}
+          isVisible={showNotification}
+          onClose={() => setShowNotification(false)}
+        />
+        
+        <View style={styles.benefitSection}>
+          <Text style={styles.benefitTitle}>환자에게 적합한 의료복지 처방전</Text>
+          <Text style={styles.benefitSubtitle}>
+            환자 정보를 바탕으로 추천된 혜택입니다
+          </Text>
+        </View>
+
+        <View style={styles.benefitList}>
+          {benefits.map((benefit) => (
+            <BenefitItem
+              key={benefit.id}
+              benefit={benefit}
+              onPress={() => handleBenefitPress(benefit)}
+            />
+          ))}
+        </View>
+      </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
+  container: {
+    flex: 1,
+    backgroundColor: AppColors.gray,
   },
-  stepContainer: {
-    gap: 8,
+  content: {
+    flex: 1,
+  },
+  benefitSection: {
+    marginTop:10,
+    paddingHorizontal: 20,
+    paddingBottom: 10,
+    paddingTop: 10,
+  },
+  benefitTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: AppColors.secondary,
     marginBottom: 8,
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  benefitSubtitle: {
+    fontSize: 14,
+    color: AppColors.darkGray,
+    lineHeight: 20,
+  },
+  benefitList: {
+    paddingBottom: 20,
   },
 });
