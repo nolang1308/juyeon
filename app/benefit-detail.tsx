@@ -11,6 +11,7 @@ import {
 import { router, useLocalSearchParams } from 'expo-router';
 import { AppColors } from '@/constants/theme';
 import { useUser } from '@/context/UserContext';
+import { BENEFIT_DATA } from '@/constants/benefits';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -37,70 +38,8 @@ export default function BenefitDetailScreen() {
   const savingsOpacity = useSharedValue(0);
   const cardScale = useSharedValue(0.8);
 
-  const benefitDetails = {
-    '1': {
-      id: '1',
-      name: '장기요양보험 재가급여',
-      category: '요양급여',
-      savings: '월 80만원',
-      description: '가정에서 요양 서비스를 받을 수 있는 혜택입니다. 방문요양, 방문목욕, 방문간호, 주·야간보호, 단기보호 서비스 등을 제공하여 환자와 가족의 부담을 크게 덜어드립니다.',
-      detailedDescription: '장기요양보험 재가급여는 거동이 불편한 어르신들이 가정에서 전문적인 요양서비스를 받을 수 있도록 지원하는 제도입니다. 요양보호사가 직접 가정을 방문하여 신체활동 지원, 가사활동 지원, 인지활동형 프로그램 등을 제공합니다.',
-      agency: '국민건강보험공단',
-      contact: '1577-1000',
-      requirements: [
-        '만 65세 이상 또는 65세 미만 노인성 질병을 가진 자',
-        '장기요양인정 신청 및 등급 판정 필요',
-        '1~5등급 또는 인지지원등급 판정 필요'
-      ]
-    },
-    '2': {
-      id: '2',
-      name: '중증환자 의료비 지원',
-      category: '의료비지원',
-      savings: '월 120만원',
-      description: '뇌혈관질환, 심장질환 등 중증질환자를 위한 의료비 지원 제도입니다. 본인부담금을 크게 줄일 수 있습니다.',
-      detailedDescription: '중증질환 의료비 지원사업은 암, 뇌혈관질환, 심장질환, 희귀질환, 중증화상 등으로 진단받은 환자의 경제적 부담을 덜어주기 위한 제도입니다. 본인부담금 상한제와 함께 적용되어 의료비 부담을 최소화합니다.',
-      agency: '보건복지부',
-      contact: '129 (보건복지콜센터)',
-      requirements: [
-        '중증질환(암, 뇌혈관질환, 심장질환 등) 진단',
-        '건강보험 가입자 또는 피부양자',
-        '소득수준에 따른 지원 차등 적용'
-      ]
-    },
-    '3': {
-      id: '3',
-      name: '장애인활동지원서비스',
-      category: '돌봄서비스',
-      savings: '월 60만원',
-      description: '일상생활 지원이 필요한 분을 위한 활동보조 서비스를 제공합니다.',
-      detailedDescription: '장애인이 지역사회에서 자립생활을 할 수 있도록 신체활동, 가사활동, 사회활동 등을 종합적으로 지원하는 서비스입니다. 개인별 지원계획에 따라 맞춤형 서비스를 제공합니다.',
-      agency: '보건복지부',
-      contact: '129 (보건복지콜센터)',
-      requirements: [
-        '만 6세 이상 ~ 만 65세 미만 등록 장애인',
-        '활동지원 인정조사표에 의한 점수 기준 충족',
-        '장애인활동지원 수급자격 인정'
-      ]
-    },
-    '4': {
-      id: '4',
-      name: '간병비 지원사업',
-      category: '간병지원',
-      savings: '월 40만원',
-      description: '저소득층 환자의 간병비 부담을 덜어주는 지원사업입니다.',
-      detailedDescription: '의료급여 수급권자 등 저소득층 환자가 입원 시 발생하는 간병비 부담을 줄이기 위해 간병서비스를 지원하는 사업입니다. 전문 간병인이 환자의 일상생활을 도와드립니다.',
-      agency: '지역 보건소',
-      contact: '지역 보건소 문의',
-      requirements: [
-        '의료급여 수급권자',
-        '기초생활보장 수급자',
-        '입원 치료가 필요한 환자'
-      ]
-    }
-  };
-
-  const benefit = benefitDetails[params.id as keyof typeof benefitDetails];
+  // Find benefit from shared data
+  const benefit = BENEFIT_DATA.find(b => b.id === params.id);
   const isAlreadyApplied = userData.appliedBenefits.some(applied => applied.id === params.id);
 
   useEffect(() => {
@@ -109,7 +48,7 @@ export default function BenefitDetailScreen() {
       const savingsAmount = parseInt(benefit.savings.replace(/[^0-9]/g, '')) || 0;
       const originalCost = savingsAmount * 3; // Assume original cost is 3x the savings
       const discountedCost = originalCost - savingsAmount;
-      const savingsPercentage = (savingsAmount / originalCost) * 100;
+      const savingsPercentage = originalCost > 0 ? (savingsAmount / originalCost) * 100 : 0;
 
       setCostData({
         originalCost,
@@ -257,7 +196,7 @@ export default function BenefitDetailScreen() {
 
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>지원 대상</Text>
-          {benefit.requirements.map((req, index) => (
+          {benefit.requirements?.map((req, index) => (
             <View key={index} style={styles.requirementItem}>
               <Text style={styles.requirementBullet}>•</Text>
               <Text style={styles.requirementText}>{req}</Text>

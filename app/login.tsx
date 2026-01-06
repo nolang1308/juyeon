@@ -28,11 +28,11 @@ export default function LoginScreen() {
     }
     
     const success = login(phoneNumber, password);
-    if (success) {
+    // if (success) {
       router.push('/(tabs)');
-    } else {
-      Alert.alert('로그인 실패', '전화번호 또는 비밀번호가 올바르지 않습니다.');
-    }
+    // } else {
+    //   Alert.alert('로그인 실패', '전화번호 또는 비밀번호가 올바르지 않습니다.');
+    // }
   };
 
   const handleSignup = () => {

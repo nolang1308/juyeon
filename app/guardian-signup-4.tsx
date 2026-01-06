@@ -25,6 +25,18 @@ export default function GuardianSignup4Screen() {
     type: string;
   }>>([]);
   const [agreePrivacy, setAgreePrivacy] = useState(false);
+  const [notificationSettings, setNotificationSettings] = useState({
+    kakao: false,
+    sms: false,
+    app: false,
+  });
+
+  const toggleNotification = (type: keyof typeof notificationSettings) => {
+    setNotificationSettings(prev => ({
+      ...prev,
+      [type]: !prev[type]
+    }));
+  };
 
   const handleDocumentPicker = async () => {
     try {
@@ -210,6 +222,45 @@ export default function GuardianSignup4Screen() {
             </View>
           </View>
 
+          <View style={styles.sectionContainer}>
+            <Text style={styles.sectionTitle}>혜택 및 공지 알림 설정 (선택)</Text>
+            <Text style={styles.sectionDescription}>
+              새로운 복지 혜택과 주요 공지사항이 있을 때{'\n'}
+              알림을 받을 수단을 선택해 주세요.
+            </Text>
+            <View style={styles.notificationOptions}>
+              <TouchableOpacity
+                style={styles.notifOptionItem}
+                onPress={() => toggleNotification('kakao')}
+              >
+                <View style={[styles.checkbox, notificationSettings.kakao && styles.checkedBox]}>
+                  {notificationSettings.kakao && <Text style={styles.checkmark}>✓</Text>}
+                </View>
+                <Text style={styles.notifOptionText}>카카오톡</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.notifOptionItem}
+                onPress={() => toggleNotification('sms')}
+              >
+                <View style={[styles.checkbox, notificationSettings.sms && styles.checkedBox]}>
+                  {notificationSettings.sms && <Text style={styles.checkmark}>✓</Text>}
+                </View>
+                <Text style={styles.notifOptionText}>문자 메시지</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.notifOptionItem}
+                onPress={() => toggleNotification('app')}
+              >
+                <View style={[styles.checkbox, notificationSettings.app && styles.checkedBox]}>
+                  {notificationSettings.app && <Text style={styles.checkmark}>✓</Text>}
+                </View>
+                <Text style={styles.notifOptionText}>앱 푸시 알림</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+
           <TouchableOpacity style={styles.completeButton} onPress={handleComplete}>
             <Text style={styles.completeButtonText}>회원가입 완료</Text>
           </TouchableOpacity>
@@ -374,6 +425,20 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: AppColors.darkGray,
     lineHeight: 18,
+  },
+  notificationOptions: {
+    backgroundColor: AppColors.gray,
+    borderRadius: 8,
+    padding: 15,
+    gap: 15,
+  },
+  notifOptionItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  notifOptionText: {
+    fontSize: 16,
+    color: AppColors.text,
   },
   completeButton: {
     backgroundColor: AppColors.secondary,

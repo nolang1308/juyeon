@@ -6,18 +6,24 @@ import {
   ScrollView,
   FlatList,
   Alert,
+  TouchableOpacity,
 } from 'react-native';
 import TopBar from '@/components/TopBar';
 import PatientCard from '@/components/PatientCard';
+import ExpenditureCard from '@/components/ExpenditureCard';
 import BenefitItem from '@/components/BenefitItem';
 import NotificationCard from '@/components/NotificationCard';
 import { AppColors } from '@/constants/theme';
 import { useUser } from '@/context/UserContext';
 import { router } from 'expo-router';
+import { BENEFIT_DATA } from '@/constants/benefits';
+
+const CATEGORIES = ['전체', '요양급여', '의료비지원', '돌봄서비스', '간병지원', '생활지원', '주거지원'];
 
 export default function HomeScreen() {
   const { userData } = useUser();
   const [showNotification, setShowNotification] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState('전체');
 
   // 기본값 설정 (로그인하지 않은 경우나 데이터가 없는 경우)
   const patientInfo = userData.patient ? {
@@ -34,41 +40,38 @@ export default function HomeScreen() {
     address: '주소 없음',
   };
 
-  const benefits = [
-    {
-      id: '1',
-      name: '장기요양보험 재가급여',
-      description: '가정에서 요양 서비스를 받을 수 있는 혜택입니다. 방문요양, 방문목욕, 방문간호 등이 포함됩니다.',
-      savings: '월 80만원',
-      category: '요양급여',
-    },
-    {
-      id: '2',
-      name: '중증환자 의료비 지원',
-      description: '뇌혈관질환 등 중증질환자를 위한 의료비 지원 제도입니다. 본인부담금을 크게 줄일 수 있습니다.',
-      savings: '월 120만원',
-      category: '의료비지원',
-    },
-    {
-      id: '3',
-      name: '장애인활동지원서비스',
-      description: '일상생활 지원이 필요한 분을 위한 활동보조 서비스를 제공합니다.',
-      savings: '월 60만원',
-      category: '돌봄서비스',
-    },
-    {
-      id: '4',
-      name: '간병비 지원사업',
-      description: '저소득층 환자의 간병비 부담을 덜어주는 지원사업입니다.',
-      savings: '월 40만원',
-      category: '간병지원',
-    },
-  ];
+  const filteredBenefits = selectedCategory === '전체'
+    ? BENEFIT_DATA
+    : BENEFIT_DATA.filter(b => b.category === selectedCategory);
+
+  const calculateTotalSavings = () => {
+    return userData.appliedBenefits.reduce((acc, benefit) => {
+      // "월 80만원" -> 800000
+      const amountStr = benefit.savings.replace(/[^0-9]/g, '');
+      // 만약 '만원' 단위가 없다면 1, 있다면 10000 곱하기 (데이터 형식에 따라 조정)
+      // 여기서는 '80만원', '30만원' 형식이므로 숫자만 추출 후 10000 곱함
+      const amount = parseInt(amountStr, 10) * 10000;
+      return acc + amount;
+    }, 0);
+  };
+
+  const totalSavings = calculateTotalSavings();
+  const originalCost = 4500000; // 예상 간병비 (하드코딩된 예시 값)
 
   const handleBenefitPress = (benefit: any) => {
     router.push({
       pathname: '/benefit-detail',
       params: { id: benefit.id },
+    });
+  };
+
+  const handleExpenditurePress = () => {
+    router.push({
+      pathname: '/expenditure-analysis',
+      params: { 
+        originalCost: originalCost.toString(),
+        savings: totalSavings.toString()
+      },
     });
   };
 
@@ -82,6 +85,12 @@ export default function HomeScreen() {
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         <PatientCard patient={patientInfo} />
         
+        <ExpenditureCard 
+          originalCost={originalCost}
+          savings={totalSavings}
+          onPress={handleExpenditurePress}
+        />
+
         <NotificationCard 
           patientName={patientInfo.name}
           isVisible={showNotification}
@@ -95,14 +104,47 @@ export default function HomeScreen() {
           </Text>
         </View>
 
+        <ScrollView 
+          horizontal 
+          showsHorizontalScrollIndicator={false} 
+          style={styles.chipScroll}
+          contentContainerStyle={styles.chipContainer}
+        >
+          {CATEGORIES.map((cat) => (
+            <TouchableOpacity
+              key={cat}
+              style={[
+                styles.chip,
+                selectedCategory === cat && styles.activeChip
+              ]}
+              onPress={() => setSelectedCategory(cat)}
+            >
+              <Text 
+                style={[
+                  styles.chipText,
+                  selectedCategory === cat && styles.activeChipText
+                ]}
+              >
+                {cat}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+
         <View style={styles.benefitList}>
-          {benefits.map((benefit) => (
+          {filteredBenefits.map((benefit) => (
             <BenefitItem
               key={benefit.id}
               benefit={benefit}
+              isApplied={userData.appliedBenefits.some(b => b.id === benefit.id)}
               onPress={() => handleBenefitPress(benefit)}
             />
           ))}
+          {filteredBenefits.length === 0 && (
+            <View style={styles.emptyContainer}>
+              <Text style={styles.emptyText}>해당 카테고리의 혜택이 없습니다.</Text>
+            </View>
+          )}
         </View>
       </ScrollView>
     </View>
@@ -134,7 +176,43 @@ const styles = StyleSheet.create({
     color: AppColors.darkGray,
     lineHeight: 20,
   },
+  chipScroll: {
+    marginBottom: 10,
+  },
+  chipContainer: {
+    paddingHorizontal: 20,
+    gap: 8,
+  },
+  chip: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+    backgroundColor: AppColors.white,
+    borderWidth: 1,
+    borderColor: AppColors.lightGray,
+  },
+  activeChip: {
+    backgroundColor: AppColors.primary,
+    borderColor: AppColors.primary,
+  },
+  chipText: {
+    fontSize: 14,
+    color: AppColors.darkGray,
+    fontWeight: '500',
+  },
+  activeChipText: {
+    color: AppColors.white,
+    fontWeight: 'bold',
+  },
   benefitList: {
     paddingBottom: 20,
+  },
+  emptyContainer: {
+    padding: 30,
+    alignItems: 'center',
+  },
+  emptyText: {
+    color: AppColors.darkGray,
+    fontSize: 14,
   },
 });

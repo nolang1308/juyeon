@@ -18,14 +18,22 @@ interface Benefit {
 interface BenefitItemProps {
   benefit: Benefit;
   onPress?: () => void;
+  isApplied?: boolean;
 }
 
-export default function BenefitItem({ benefit, onPress }: BenefitItemProps) {
+export default function BenefitItem({ benefit, onPress, isApplied }: BenefitItemProps) {
   return (
     <TouchableOpacity style={styles.container} onPress={onPress}>
       <View style={styles.header}>
-        <View style={styles.categoryBadge}>
-          <Text style={styles.categoryText}>{benefit.category}</Text>
+        <View style={styles.badgeContainer}>
+          <View style={styles.categoryBadge}>
+            <Text style={styles.categoryText}>{benefit.category}</Text>
+          </View>
+          {isApplied && (
+            <View style={styles.appliedBadge}>
+              <Text style={styles.appliedText}>신청함</Text>
+            </View>
+          )}
         </View>
         <View style={styles.savingsContainer}>
           <Text style={styles.savingsText}>{benefit.savings}</Text>
@@ -69,11 +77,28 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 10,
   },
+  badgeContainer: {
+    flexDirection: 'row',
+    gap: 6,
+  },
   categoryBadge: {
     backgroundColor: AppColors.primary,
     paddingHorizontal: 12,
     paddingVertical: 4,
     borderRadius: 12,
+  },
+  appliedBadge: {
+    backgroundColor: '#E8F5E9',
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#4CAF50',
+  },
+  appliedText: {
+    fontSize: 12,
+    fontWeight: 'bold',
+    color: '#2E7D32',
   },
   categoryText: {
     fontSize: 12,

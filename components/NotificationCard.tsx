@@ -121,6 +121,7 @@ export default function NotificationCard({ patientName, isVisible, onClose }: No
 
 const styles = StyleSheet.create({
   container: {
+    marginTop: 20,
     marginHorizontal: 20,
     marginBottom: 20,
     overflow: 'hidden',
