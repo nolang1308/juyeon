@@ -8,6 +8,7 @@ export const BENEFIT_DATA = [
     detailedDescription: '장기요양보험 재가급여는 거동이 불편한 어르신들이 가정에서 전문적인 요양서비스를 받을 수 있도록 지원하는 제도입니다. 요양보호사가 직접 가정을 방문하여 신체활동 지원, 가사활동 지원, 인지활동형 프로그램 등을 제공합니다.',
     agency: '국민건강보험공단',
     contact: '1577-1000',
+    deadline: '2026-01-15', // D-8
     requirements: [
       '만 65세 이상 또는 65세 미만 노인성 질병을 가진 자',
       '장기요양인정 신청 및 등급 판정 필요',
@@ -23,6 +24,7 @@ export const BENEFIT_DATA = [
     detailedDescription: '중증질환 의료비 지원사업은 암, 뇌혈관질환, 심장질환, 희귀질환, 중증화상 등으로 진단받은 환자의 경제적 부담을 덜어주기 위한 제도입니다. 본인부담금 상한제와 함께 적용되어 의료비 부담을 최소화합니다.',
     agency: '보건복지부',
     contact: '129 (보건복지콜센터)',
+    deadline: '2026-02-20', // 여유
     requirements: [
       '중증질환(암, 뇌혈관질환, 심장질환 등) 진단',
       '건강보험 가입자 또는 피부양자',
@@ -38,6 +40,7 @@ export const BENEFIT_DATA = [
     detailedDescription: '장애인이 지역사회에서 자립생활을 할 수 있도록 신체활동, 가사활동, 사회활동 등을 종합적으로 지원하는 서비스입니다. 개인별 지원계획에 따라 맞춤형 서비스를 제공합니다.',
     agency: '보건복지부',
     contact: '129 (보건복지콜센터)',
+    deadline: '2026-01-10', // D-3 (임박)
     requirements: [
       '만 6세 이상 ~ 만 65세 미만 등록 장애인',
       '활동지원 인정조사표에 의한 점수 기준 충족',
@@ -53,13 +56,13 @@ export const BENEFIT_DATA = [
     detailedDescription: '의료급여 수급권자 등 저소득층 환자가 입원 시 발생하는 간병비 부담을 줄이기 위해 간병서비스를 지원하는 사업입니다. 전문 간병인이 환자의 일상생활을 도와드립니다.',
     agency: '지역 보건소',
     contact: '지역 보건소 문의',
+    deadline: '2026-12-31', // 상시/여유
     requirements: [
       '의료급여 수급권자',
       '기초생활보장 수급자',
       '입원 치료가 필요한 환자'
     ]
   },
-  // 추가 데이터 10개
   {
     id: '5',
     name: '노인맞춤돌봄서비스',
@@ -69,6 +72,7 @@ export const BENEFIT_DATA = [
     detailedDescription: '안전확인, 사회참여, 생활교육, 일상생활 지원 등 개인별 욕구에 따른 맞춤형 서비스를 제공하여 안정적인 노후생활을 지원합니다.',
     agency: '보건복지부',
     contact: '129',
+    deadline: '2026-01-30',
     requirements: ['만 65세 이상 기초생활수급자, 차상위계층 또는 기초연금수급자', '독거노인 등 돌봄이 필요한 자']
   },
   {
@@ -80,6 +84,7 @@ export const BENEFIT_DATA = [
     detailedDescription: '중한 질병 또는 부상으로 인해 발생한 의료비를 감당하기 어려운 분들에게 입원비, 수술비 등을 긴급하게 지원합니다.',
     agency: '시/군/구청',
     contact: '129',
+    deadline: '2026-01-08', // D-1
     requirements: ['위기상황 발생으로 생계유지 곤란', '소득 및 재산 기준 충족']
   },
   {
@@ -91,6 +96,7 @@ export const BENEFIT_DATA = [
     detailedDescription: '입원 또는 외래 진료 시 본인부담상한제를 적용받지 못하는 비급여 진료비 등을 포함하여 의료비 부담을 줄여줍니다.',
     agency: '국민건강보험공단',
     contact: '1577-1000',
+    deadline: '2026-03-31',
     requirements: ['소득 하위 50% 이하', '연소득 대비 의료비 비중이 높은 경우']
   },
   {
@@ -102,6 +108,7 @@ export const BENEFIT_DATA = [
     detailedDescription: '휠체어, 전동침대, 욕창예방매트리스 등 복지용구를 구입하거나 대여할 때 비용의 일부를 지원합니다.',
     agency: '국민건강보험공단',
     contact: '1577-1000',
+    deadline: '2026-12-31',
     requirements: ['장기요양등급 판정자']
   },
   {
@@ -113,6 +120,7 @@ export const BENEFIT_DATA = [
     detailedDescription: '요양보호사가 가정을 방문하여 신체수발, 가사지원, 간병 서비스 등을 제공하여 생활 안정을 돕습니다.',
     agency: '지역 자활센터',
     contact: '주민센터',
+    deadline: '2026-02-15',
     requirements: ['만 65세 미만 생계·의료·주거·교육급여 수급자', '차상위계층 중 가사·간병이 필요한 자']
   },
   {
@@ -124,6 +132,7 @@ export const BENEFIT_DATA = [
     detailedDescription: '문턱 제거, 핸드레일 설치, 미끄럼 방지 타일 시공 등 고령자나 장애인이 안전하게 생활할 수 있도록 주거환경을 개선해줍니다.',
     agency: '지자체/주택공사',
     contact: '관할 주민센터',
+    deadline: '2026-04-30',
     requirements: ['기초생활수급자 또는 차상위계층', '장기요양등급 인정자 우대']
   },
   {
@@ -135,6 +144,7 @@ export const BENEFIT_DATA = [
     detailedDescription: '치매 진단을 받고 치료약을 복용 중인 환자에게 본인부담금 내에서 월 3만원 한도로 실비를 지원합니다.',
     agency: '보건소 치매안심센터',
     contact: '1899-9988',
+    deadline: '2026-12-31',
     requirements: ['치매상병코드 진단자', '치매치료약 복용자', '기준 중위소득 120% 이하']
   },
   {
@@ -146,6 +156,7 @@ export const BENEFIT_DATA = [
     detailedDescription: '청각장애인 복지카드를 소지한 분이 보청기를 구입할 경우, 기준 금액 내에서 급여비를 지원합니다. (5년에 1회)',
     agency: '국민건강보험공단',
     contact: '1577-1000',
+    deadline: '2026-06-30',
     requirements: ['청각장애 등록자', '이비인후과 전문의 처방']
   },
   {
@@ -157,6 +168,7 @@ export const BENEFIT_DATA = [
     detailedDescription: '한쪽 무릎 기준 120만원 한도 내에서 검사비, 수술비, 간병비 등을 지원합니다.',
     agency: '노인의료나눔재단',
     contact: '1661-6595',
+    deadline: '2026-05-15',
     requirements: ['만 60세 이상', '기초생활수급자, 차상위계층, 한부모가족']
   },
   {
@@ -168,6 +180,7 @@ export const BENEFIT_DATA = [
     detailedDescription: '휠체어 탑승 설비가 장착된 차량이나 저렴한 요금의 택시를 이용하여 병원 이동 등을 돕습니다.',
     agency: '지역 교통약자이동지원센터',
     contact: '지역별 상이',
+    deadline: '2026-12-31',
     requirements: ['보행상 장애가 있는 장애인', '만 65세 이상 대중교통 이용이 어려운 자']
   }
 ];

@@ -42,6 +42,23 @@ export default function BenefitDetailScreen() {
   const benefit = BENEFIT_DATA.find(b => b.id === params.id);
   const isAlreadyApplied = userData.appliedBenefits.some(applied => applied.id === params.id);
 
+  const getDdayInfo = (deadline?: string) => {
+    if (!deadline) return null;
+    const today = new Date();
+    const target = new Date(deadline);
+    today.setHours(0, 0, 0, 0);
+    target.setHours(0, 0, 0, 0);
+    const diffTime = target.getTime() - today.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    
+    if (diffDays < 0) return { text: '마감', color: '#9E9E9E', bg: '#F5F5F5' };
+    if (diffDays === 0) return { text: 'D-Day', color: '#FFFFFF', bg: '#FF5252' };
+    if (diffDays <= 7) return { text: `D-${diffDays}`, color: '#FFFFFF', bg: '#FF5252' };
+    return { text: `D-${diffDays}`, color: '#FFFFFF', bg: '#2196F3' };
+  };
+
+  const dDay = getDdayInfo(benefit?.deadline);
+
   useEffect(() => {
     if (benefit) {
       // Parse savings amount and calculate costs
@@ -146,6 +163,18 @@ export default function BenefitDetailScreen() {
             <Text style={styles.categoryText}>{benefit.category}</Text>
           </View>
           <Text style={styles.title}>{benefit.name}</Text>
+          
+          {benefit.deadline && dDay && (
+            <View style={styles.deadlineWrapper}>
+              <View style={[styles.dDayBadge, { backgroundColor: dDay.bg }]}>
+                <Text style={[styles.dDayText, { color: dDay.color }]}>{dDay.text}</Text>
+              </View>
+              <Text style={styles.deadlineText}>
+                ~ {benefit.deadline}까지
+              </Text>
+            </View>
+          )}
+
           <View style={styles.savingsContainer}>
             <Text style={styles.savingsText}>{benefit.savings}</Text>
             <Text style={styles.savingsLabel}>예상 절감비용</Text>
@@ -279,6 +308,25 @@ const styles = StyleSheet.create({
     color: AppColors.secondary,
     textAlign: 'center',
     marginBottom: 15,
+  },
+  deadlineWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 15,
+  },
+  dDayBadge: {
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 12,
+  },
+  dDayText: {
+    fontSize: 12,
+    fontWeight: 'bold',
+  },
+  deadlineText: {
+    fontSize: 14,
+    color: AppColors.darkGray,
   },
   savingsContainer: {
     alignItems: 'center',

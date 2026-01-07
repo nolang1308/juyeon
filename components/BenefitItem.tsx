@@ -13,6 +13,7 @@ interface Benefit {
   description: string;
   savings: string;
   category: string;
+  deadline?: string;
 }
 
 interface BenefitItemProps {
@@ -22,6 +23,30 @@ interface BenefitItemProps {
 }
 
 export default function BenefitItem({ benefit, onPress, isApplied }: BenefitItemProps) {
+  const getDdayInfo = (deadline?: string) => {
+    if (!deadline) return null;
+    
+    const today = new Date();
+    // For demo purposes, let's fix today as 2026-01-07 if needed, 
+    // but using system date is better for real app. 
+    // Assuming system date is correct.
+    const target = new Date(deadline);
+    
+    // Normalize time to compare dates only
+    today.setHours(0, 0, 0, 0);
+    target.setHours(0, 0, 0, 0);
+    
+    const diffTime = target.getTime() - today.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    
+    if (diffDays < 0) return { text: '마감', color: '#9E9E9E', bg: '#F5F5F5' };
+    if (diffDays === 0) return { text: 'D-Day', color: '#FFFFFF', bg: '#FF5252' };
+    if (diffDays <= 7) return { text: `D-${diffDays}`, color: '#FFFFFF', bg: '#FF5252' }; // Emergency
+    return { text: `D-${diffDays}`, color: '#FFFFFF', bg: '#2196F3' }; // Normal
+  };
+
+  const dDay = getDdayInfo(benefit.deadline);
+
   return (
     <TouchableOpacity style={styles.container} onPress={onPress}>
       <View style={styles.header}>
@@ -29,6 +54,11 @@ export default function BenefitItem({ benefit, onPress, isApplied }: BenefitItem
           <View style={styles.categoryBadge}>
             <Text style={styles.categoryText}>{benefit.category}</Text>
           </View>
+          {dDay && (
+            <View style={[styles.dDayBadge, { backgroundColor: dDay.bg }]}>
+              <Text style={[styles.dDayText, { color: dDay.color }]}>{dDay.text}</Text>
+            </View>
+          )}
           {isApplied && (
             <View style={styles.appliedBadge}>
               <Text style={styles.appliedText}>신청함</Text>
@@ -86,6 +116,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 4,
     borderRadius: 12,
+  },
+  dDayBadge: {
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 12,
+  },
+  dDayText: {
+    fontSize: 12,
+    fontWeight: 'bold',
   },
   appliedBadge: {
     backgroundColor: '#E8F5E9',
